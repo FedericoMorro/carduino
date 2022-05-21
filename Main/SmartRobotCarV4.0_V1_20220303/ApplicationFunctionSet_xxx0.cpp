@@ -2082,7 +2082,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_SerialPortDataAnalysis(void)
 void ApplicationFunctionSet::ApplicationFunctionSet_StopWhiteLine () {
   uint8_t lvl = 55;
   int L, M, R;
-
+  
   L = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_L();
   M = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_M();
   R = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_R();
@@ -2090,7 +2090,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_StopWhiteLine () {
   if (L < lvl && M < lvl && R < lvl) {
       ApplicationFunctionSet_SmartRobotCarMotionControl (stop_it, 0);
       delay(5000);
-      ApplicationFunctionSet_SmartRobotCarMotionControl (Forward, 255);
+      ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 100);
       delay_xxx(1000);
       ApplicationFunctionSet_SmartRobotCarMotionControl (Forward, 50);
   }

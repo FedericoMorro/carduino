@@ -653,6 +653,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void)
     uint8_t distance = 20;
     uint16_t dly = 600;
     uint8_t max_dist, max_i;
+    uint8_t reduced_dist = 15;
     uint8_t dist_array[] = {0,0,0,0,0};
     uint8_t cnt;
 
@@ -680,7 +681,9 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void)
 
     AppULTRASONIC.DeviceDriverSet_ULTRASONIC_Get(&get_Distance /*out*/);
     delay_xxx(10);
-    if (get_Distance < distance)
+
+    if( ((!searchObst || searchObst == 1 || searchObst == 4 || searchObst == 5) && get_Distance < distance) ||
+    (get_Distance < reduced_dist) )
     {
       ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
 
@@ -688,7 +691,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void)
         dly = dly / 2;
 
       max_dist = 0;
-      max_i = -1;
+      max_i = 0;
       
       for (uint8_t i = 0; i <= 4; i++) // Omnidirectional detection of obstacle avoidance status
       {
@@ -2082,7 +2085,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_SerialPortDataAnalysis(void)
 void ApplicationFunctionSet::ApplicationFunctionSet_StopWhiteLine () {
   uint8_t lvl = 55;
   int L, M, R;
-
+  
   L = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_L();
   M = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_M();
   R = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_R();
@@ -2090,7 +2093,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_StopWhiteLine () {
   if (L < lvl && M < lvl && R < lvl) {
       ApplicationFunctionSet_SmartRobotCarMotionControl (stop_it, 0);
       delay(5000);
-      ApplicationFunctionSet_SmartRobotCarMotionControl (Forward, 255);
+      ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 100);
       delay_xxx(1000);
       ApplicationFunctionSet_SmartRobotCarMotionControl (Forward, 50);
   }

@@ -679,6 +679,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void)
     //}
 
     AppULTRASONIC.DeviceDriverSet_ULTRASONIC_Get(&get_Distance /*out*/);
+    delay_xxx(10);
     if (get_Distance < distance)
     {
       ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
@@ -690,7 +691,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void)
       for (uint8_t i = 0; i <= 4; i ++) // Omnidirectional detection of obstacle avoidance status
       {
         AppServo.DeviceDriverSet_Servo_control(45 * i /*Position_angle*/);
-        delay_xxx(1);
+        delay_xxx(10);
         AppULTRASONIC.DeviceDriverSet_ULTRASONIC_Get(&get_Distance /*out*/);
         
         dist_array[i] = get_Distance;

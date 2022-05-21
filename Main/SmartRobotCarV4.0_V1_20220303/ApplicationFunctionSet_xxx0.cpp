@@ -7,7 +7,7 @@
  * @FilePath: 
  */
 #include <avr/wdt.h>
-//#include <hardwareSerial.h>
+#include <hardwareSerial.h>
 #include <stdio.h>
 #include <string.h>
 #include "ApplicationFunctionSet_xxx0.h"
@@ -651,9 +651,9 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void)
     static uint8_t searchObst = 0;
     uint8_t speed = 30;
     uint8_t distance = 20;
-    uint8_t dly = 600;
+    uint16_t dly = 600;
     uint8_t max_dist, max_i;
-    uint8_t dist_array[5];
+    uint8_t dist_array[] = {0,0,0,0,0};
     uint8_t cnt;
 
     searchObst = (searchObst + 1) % 8;
@@ -685,16 +685,21 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void)
       ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
 
       if (searchObst == 2 || searchObst == 3 || searchObst == 6 || searchObst == 7)
-        dly = 0.5 * dly;
+        dly = dly / 2;
 
       max_dist = 0;
-      for (uint8_t i = 0; i <= 4; i ++) // Omnidirectional detection of obstacle avoidance status
+      max_i = -1;
+      
+      for (uint8_t i = 0; i <= 4; i++) // Omnidirectional detection of obstacle avoidance status
       {
         AppServo.DeviceDriverSet_Servo_control(45 * i /*Position_angle*/);
-        delay_xxx(10);
+        delay_xxx(5);
         AppULTRASONIC.DeviceDriverSet_ULTRASONIC_Get(&get_Distance /*out*/);
+        delay_xxx(10);
         
         dist_array[i] = get_Distance;
+        Serial.print("Get_distance: ");
+        Serial.println(get_Distance);
         if (get_Distance > max_dist) {
           max_dist = get_Distance;
           max_i = i;
@@ -705,19 +710,20 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void)
 
       cnt = 0;
       for (uint8_t i=0; i<5; i++) {
-        if (dist_array[i] < distance + 5)
+        if (dist_array[i] < distance + 5){
           cnt++;
+        }
       }
 
       if (cnt < 3) {
         switch (max_i)
         {
         case 0:
-          ApplicationFunctionSet_SmartRobotCarMotionControl(Right, speed);
-          delay_xxx(2 * dly);
+          ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 2* speed);
+          delay_xxx(3 * dly / 2);
           break;
         case 1:
-          ApplicationFunctionSet_SmartRobotCarMotionControl(Right, speed);
+          ApplicationFunctionSet_SmartRobotCarMotionControl(Left,2* speed);
           delay_xxx(dly);
           break;
         case 2:
@@ -725,17 +731,17 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void)
           delay_xxx(dly);
           break;
         case 3:
-          ApplicationFunctionSet_SmartRobotCarMotionControl(Right, speed);
+          ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 2* speed);
           delay_xxx(dly);
           break;
         case 4:
-          ApplicationFunctionSet_SmartRobotCarMotionControl(Right, speed);
-          delay_xxx(2 * dly);
+          ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 2 * speed);
+          delay_xxx(3 * dly / 2);
           break;
         }
         //first_is = true;
       } else {
-        ApplicationFunctionSet_SmartRobotCarMotionControl(Backward, speed);
+        ApplicationFunctionSet_SmartRobotCarMotionControl(Backward, 2*speed);
         delay_xxx(2 * dly);
       }
       
@@ -2074,7 +2080,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_SerialPortDataAnalysis(void)
 
 
 void ApplicationFunctionSet::ApplicationFunctionSet_StopWhiteLine () {
-  uint8_t lvl = 70;
+  uint8_t lvl = 55;
   int L, M, R;
 
   L = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_L();
@@ -2083,8 +2089,9 @@ void ApplicationFunctionSet::ApplicationFunctionSet_StopWhiteLine () {
 
   if (L < lvl && M < lvl && R < lvl) {
       ApplicationFunctionSet_SmartRobotCarMotionControl (stop_it, 0);
-      delay_xxx(5000);
+      delay(5000);
+      ApplicationFunctionSet_SmartRobotCarMotionControl (Forward, 255);
+      delay_xxx(1000);
       ApplicationFunctionSet_SmartRobotCarMotionControl (Forward, 50);
-      delay_xxx(2000);
   }
 }

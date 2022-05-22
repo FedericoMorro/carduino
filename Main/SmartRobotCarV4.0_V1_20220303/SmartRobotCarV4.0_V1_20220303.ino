@@ -8,7 +8,7 @@
  */
 #include <avr/wdt.h>
 #include "ApplicationFunctionSet_xxx0.h"
-#include <IRremote.hpp>
+#include <IRremote.h>
 
 #define IR_RECEIVE_PIN 9
 #define PIN_RBGLED 4

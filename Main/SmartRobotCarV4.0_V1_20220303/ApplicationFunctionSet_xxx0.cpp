@@ -12,11 +12,7 @@
 #include <string.h>
 #include "ApplicationFunctionSet_xxx0.h"
 #include "DeviceDriverSet_xxx0.h"
-<<<<<<< HEAD
 #include <IRremote.hpp>
-=======
-#include <IRremote.h>
->>>>>>> clean_code
 
 #include "ArduinoJson-v6.11.1.h" //ArduinoJson
 #include "MPU6050_getdata.h"
@@ -24,19 +20,16 @@
 #define _is_print 1
 #define _Test_print 0
 
-<<<<<<< HEAD
 #define IR_RECEIVE_PIN 9
 #define PIN_RBGLED 4
 
 
 static bool is_moving = 0;
 
-=======
 
   
 static IRrecv irrecv(9);
 static decode_results results;
->>>>>>> clean_code
 
 ApplicationFunctionSet Application_FunctionSet;
 
@@ -244,47 +237,6 @@ static void ApplicationFunctionSet_SmartRobotCarMotionControl(SmartRobotCarMotio
   static uint8_t directionRecord = 0;
   uint8_t Kp, UpperLimit;
   uint8_t speed = is_speed;
-<<<<<<< HEAD
-
-  if(speed > 0){
-    is_moving = true;
-  }else{
-    is_moving = false;
-  }
-
-  //Control mode that requires straight line movement adjustment（Car will has movement offset easily in the below mode，the movement cannot achieve the effect of a relatively straight direction
-  //so it needs to add control adjustment）
-  /*
-  switch (Application_SmartRobotCarxxx0.Functional_Mode)
-  {
-  case Rocker_mode:
-    Kp = 10;
-    UpperLimit = 255;
-    break;
-  case ObstacleAvoidance_mode:
-    Kp = 2;
-    UpperLimit = 180;
-    break;
-  case Follow_mode:
-    Kp = 2;
-    UpperLimit = 180;
-    break;
-  case CMD_CarControl_TimeLimit:
-    Kp = 2;
-    UpperLimit = 180;
-    break;
-  case CMD_CarControl_NoTimeLimit:
-    Kp = 2;
-    UpperLimit = 180;
-    break;
-  default:
-    Kp = 10;
-    UpperLimit = 255;
-    break;
-  }
-  */
-=======
->>>>>>> clean_code
 
   Kp = 2;
   UpperLimit = 180;
@@ -560,16 +512,12 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Servo(uint8_t Set_Servo)
 void ApplicationFunctionSet::ApplicationFunctionSet_StopWhiteLine () {
   uint8_t lvl = 60;
   int L, M, R;
-<<<<<<< HEAD
 
   IRdata data;
 
   // bool is_moving = bitRead(PIN_Motor_AIN_1, 1) | bitRead(PIN_Motor_BIN_1, 1) | bitRead(PIN_Motor_PWMA, 1) | bitRead(PIN_Motor_PWMB, 1);
   // is_moving globale
 
-=======
-  
->>>>>>> clean_code
   L = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_L();
   M = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_M();
   R = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_R();
@@ -589,7 +537,6 @@ void ApplicationFunctionSet::ApplicationFunctionSet_StopWhiteLine () {
 
       Serial.println(results.value);
 
-<<<<<<< HEAD
   if (L < lvl && M < lvl && R < lvl) {
 
     if (IrReceiver.decode()) {
@@ -620,15 +567,5 @@ void ApplicationFunctionSet::ApplicationFunctionSet_StopWhiteLine () {
         ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 50);
         Serial.println("Velocità normale");
     }
-=======
-    } else {
-      ApplicationFunctionSet_SmartRobotCarMotionControl (stop_it, 0);
-      delay_xxx(2000);
-    }
-
-    ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 50);
-      delay_xxx(1000);
-      ApplicationFunctionSet_SmartRobotCarMotionControl (Forward, 50);
->>>>>>> clean_code
   }
 }

@@ -2083,18 +2083,27 @@ void ApplicationFunctionSet::ApplicationFunctionSet_SerialPortDataAnalysis(void)
 
 
 void ApplicationFunctionSet::ApplicationFunctionSet_StopWhiteLine () {
-  uint8_t lvl = 55;
+  uint8_t lvl = 60;
   int L, M, R;
   
   L = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_L();
   M = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_M();
   R = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_R();
 
+  Serial.println("Fotocellula:");
+  Serial.println(L);
+  Serial.println(M);
+  Serial.println(R);
+
   if (L < lvl && M < lvl && R < lvl) {
       ApplicationFunctionSet_SmartRobotCarMotionControl (stop_it, 0);
+      Serial.println("Mi sono fermato");
       delay(5000);
+      Serial.println("Finito il primo delay");
       ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 100);
+      Serial.println("Riparto");
       delay_xxx(1000);
       ApplicationFunctionSet_SmartRobotCarMotionControl (Forward, 50);
+      Serial.println("Velocità normale");
   }
 }

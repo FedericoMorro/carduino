@@ -13,6 +13,7 @@
 void setup()
 {
   // put your setup code here, to run once:
+  //Serial.println("Init");
   Application_FunctionSet.ApplicationFunctionSet_Init();
   wdt_enable(WDTO_2S);
 }

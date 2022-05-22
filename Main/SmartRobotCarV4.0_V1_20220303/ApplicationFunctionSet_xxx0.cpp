@@ -12,13 +12,20 @@
 #include <string.h>
 #include "ApplicationFunctionSet_xxx0.h"
 #include "DeviceDriverSet_xxx0.h"
-//#include <IRremote.h>
+#include <IRremote.hpp>
 
 #include "ArduinoJson-v6.11.1.h" //ArduinoJson
 #include "MPU6050_getdata.h"
 
 #define _is_print 1
 #define _Test_print 0
+
+#define IR_RECIVE_PIN 9
+#define PIN_RBGLED 4
+
+
+static bool is_moving = 0;
+
 
 ApplicationFunctionSet Application_FunctionSet;
 
@@ -45,12 +52,36 @@ function_xxx(long x, long s, long e) //f(x)
 static void
 delay_xxx(uint16_t _ms)
 {
+
   wdt_reset();
   for (unsigned long i = 0; i < _ms; i++)
   {
     delay(1);
   }
 }
+
+static void delay_xxx(uint16_t _ms){
+  uint16_t end, start, delayed;
+
+  start = millis();
+  Application_FunctionSet.ApplicationFunctionSet_StopWhiteLine(); 
+  end = millis();
+
+  delayed = end-start;
+
+  if(delayed > _ms){
+    return;
+  }
+  
+
+  wdt_reset();
+  for (unsigned long i = 0; i < _ms/delayed; i++)
+  {
+    Application_FunctionSet.ApplicationFunctionSet_StopWhiteLine();
+    delay(1);
+  }
+}
+
 
 /*Movement Direction Control List*/
 enum SmartRobotCarMotionControl
@@ -209,6 +240,13 @@ static void ApplicationFunctionSet_SmartRobotCarMotionControl(SmartRobotCarMotio
   static uint8_t directionRecord = 0;
   uint8_t Kp, UpperLimit;
   uint8_t speed = is_speed;
+
+  if(speed > 0){
+    is_moving = true;
+  }else{
+    is_moving = false;
+  }
+
   //Control mode that requires straight line movement adjustment（Car will has movement offset easily in the below mode，the movement cannot achieve the effect of a relatively straight direction
   //so it needs to add control adjustment）
   /*
@@ -709,6 +747,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void)
     if (cnt < 3) {
       switch (max_i)
       {
+      // in the manouvre operations we shall not check for the line
       case 0:
         ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 2* speed);
         delay_xxx(3 * dly / 2);
@@ -2070,8 +2109,12 @@ void ApplicationFunctionSet::ApplicationFunctionSet_SerialPortDataAnalysis(void)
 void ApplicationFunctionSet::ApplicationFunctionSet_StopWhiteLine () {
   uint8_t lvl = 60;
   int L, M, R;
-  /*bool is_moving = bitRead(PIN_Motor_AIN_1, 1) | bitRead(PIN_Motor_BIN_1, 1) | bitRead(PIN_Motor_PWMA, 1) | bitRead(PIN_Motor_PWMB, 1);
-  
+
+  IRdata data;
+
+  // bool is_moving = bitRead(PIN_Motor_AIN_1, 1) | bitRead(PIN_Motor_BIN_1, 1) | bitRead(PIN_Motor_PWMA, 1) | bitRead(PIN_Motor_PWMB, 1);
+  // is_moving globale
+
   L = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_L();
   M = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_M();
   R = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_R();
@@ -2082,15 +2125,35 @@ void ApplicationFunctionSet::ApplicationFunctionSet_StopWhiteLine () {
   Serial.println(M);
   Serial.println(R);
 
-  if (is_moving && L < lvl && M < lvl && R < lvl) {
-      ApplicationFunctionSet_SmartRobotCarMotionControl (stop_it, 0);
-      Serial.println("Mi sono fermato");
-      delay_xxx(5000);
-      Serial.println("Finito il primo delay");
-      ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 100);
-      Serial.println("Riparto");
-      delay_xxx(1000);
-      ApplicationFunctionSet_SmartRobotCarMotionControl (Forward, 50);
-      Serial.println("Velocità normale");
-  }*/
+  if (L < lvl && M < lvl && R < lvl) {
+
+    if (IrReceiver.decode()) {
+        Serial.println(IrReceiver.decodedIRData.decodedRawData, HEX);
+        IrReceiver.printIRResultShort(&Serial); // optional use new print version
+        data = IrReceiver.decodedIRData();
+
+        while(data.address == 0xCODE && data.command == 0xDEAD){
+          ApplicationFunctionSet_SmartRobotCarMotionControl (stop_it, 0);
+          data = IrReceiver.decodedIRData();
+        }
+
+        ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 100);
+        Serial.println("Riparto");
+        delay_xxx(1000);
+        ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 50);
+
+
+        IrReceiver.resume(); // Enable receiving of the next value
+    }else{
+        ApplicationFunctionSet_SmartRobotCarMotionControl (stop_it, 0);
+        Serial.println("Mi sono fermato");
+        delay_xxx(5000);
+        Serial.println("Finito il primo delay");
+        ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 100);
+        Serial.println("Riparto");
+        delay_xxx(1000);
+        ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 50);
+        Serial.println("Velocità normale");
+    }
+  }
 }

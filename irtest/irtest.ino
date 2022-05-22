@@ -3,7 +3,7 @@
 #define IR_RECEIVE_PIN 9
 #define PIN_RBGLED 4
 
-struct IRData {
+/*struct IRData {
     decode_type_t protocol;  // UNKNOWN, NEC, SONY, RC5, ...
     uint16_t address;        // Decoded address
     uint16_t command;        // Decoded command
@@ -12,10 +12,11 @@ struct IRData {
     uint8_t flags;               // See IRDATA_FLAGS_* definitions above
     uint32_t decodedRawData;     // Up to 32 bit decoded raw data, used for sendRaw functions.
     irparams_struct *rawDataPtr; // Pointer of the raw timing data to be decoded. Mainly the data buffer filled by receiving ISR.
-};
+};*/
 
 void setup() {
     IrReceiver.begin(IR_RECEIVE_PIN, ENABLE_LED_FEEDBACK);
+    Serial.begin(9600);
 }
 
 void loop() {

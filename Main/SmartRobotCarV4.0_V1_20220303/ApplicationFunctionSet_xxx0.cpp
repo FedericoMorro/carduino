@@ -2089,9 +2089,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_StopWhiteLine () {
 
   if (L < lvl && M < lvl && R < lvl) {
       ApplicationFunctionSet_SmartRobotCarMotionControl (stop_it, 0);
-      delay(5000);
+      delay(1000);
       ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 100);
-      delay_xxx(1000);
-      ApplicationFunctionSet_SmartRobotCarMotionControl (Forward, 50);
   }
 }

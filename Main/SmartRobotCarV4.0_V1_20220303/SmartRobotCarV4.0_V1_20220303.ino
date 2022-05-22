@@ -17,13 +17,17 @@ void setup()
 {
   // put your setup code here, to run once:
   Application_FunctionSet.ApplicationFunctionSet_Init();
+<<<<<<< HEAD
   IrReceiver.begin(IR_RECEIVE_PIN, ENABLE_LED_FEEDBACK);
   wdt_enable(WDTO_2S);
+=======
+  //wdt_enable(WDTO_2S);
+>>>>>>> 4ea5616 (v0.3 - Finally functioning maybe)
 }
 
 void loop()
 {
   //put your main code here, to run repeatedly :
-  wdt_reset();
+  //wdt_reset();
   Application_FunctionSet.ApplicationFunctionSet_Obstacle();
 }

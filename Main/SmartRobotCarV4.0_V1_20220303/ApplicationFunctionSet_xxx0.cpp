@@ -7,7 +7,7 @@
  * @FilePath: 
  */
 #include <avr/wdt.h>
-#include <hardwareSerial.h>
+//#include <hardwareSerial.h>
 #include <stdio.h>
 #include <string.h>
 #include "ApplicationFunctionSet_xxx0.h"

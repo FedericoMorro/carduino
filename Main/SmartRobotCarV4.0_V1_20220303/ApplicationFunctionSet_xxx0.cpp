@@ -292,10 +292,10 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void)
 {
   uint16_t get_Distance;
   static uint8_t searchObstCnt = 0;
-  uint8_t speed = 50;
+  uint8_t speed = 40;
   uint8_t dist = 25;
   uint8_t reduced_dist = 15;
-  uint16_t dly = 600;
+  uint16_t dly = 500;
   uint8_t max_dist, max_i;
   uint8_t min_dist, min_i;
   uint8_t dist_array[] = {0,0,0,0,0};
@@ -310,7 +310,6 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void)
   min_i = -1;
   min_dist = 50000;
   if (searchObstCnt == 12) {
-    ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
     for (uint8_t i = 0; i <= 4; i++) {
       if (i == 0 || i == 2) {
         AppServo.DeviceDriverSet_Servo_control(90);

@@ -285,23 +285,44 @@ static void ApplicationFunctionSet_SmartRobotCarMotionControl(SmartRobotCarMotio
 void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void)
 {
   uint16_t get_Distance;
-  static uint8_t searchObst = 0;
+  static uint8_t searchObstCnt = 0;
   uint8_t speed = 30;
   uint8_t distance = 25;
   uint8_t reduced_dist = 15;
   uint16_t dly = 600;
   uint8_t max_dist, max_i;
+  uint8_t min_dist, min_i;
   uint8_t dist_array[] = {0,0,0,0,0};
   uint8_t cnt;
+  static bool set = false;
 
-  searchObst = (searchObst + 1) % 8;
-  if (searchObst == 0 || searchObst == 1 || searchObst == 4 || searchObst == 5 ) {
+  if (set == false) {
     AppServo.DeviceDriverSet_Servo_control(90);
-  } else if (searchObst == 2 || searchObst == 3) {
-    AppServo.DeviceDriverSet_Servo_control(0);
-  } else {
-    AppServo.DeviceDriverSet_Servo_control(180);
   }
+
+  min_i = -1;
+  min_dist = 50000;
+  if (searchObstCnt == 20) {
+    ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
+    for (uint8_t i = 0; i <= 4; i++) {
+      if (i == 0 || i == 2) {
+        AppServo.DeviceDriverSet_Servo_control(90);
+      } else if (i == 1) {
+        AppServo.DeviceDriverSet_Servo_control(0);
+      } else {
+        AppServo.DeviceDriverSet_Servo_control(180);
+      }
+      AppULTRASONIC.DeviceDriverSet_ULTRASONIC_Get(&get_Distance /*out*/);
+      if (get_Distance < min_dist) {
+        min_dist = get_Distance;
+        min_i = i;
+      }
+    }
+    searchObstCnt = 0;
+    set = false;
+  }
+  searchObstCnt++;
+
 
   /*
   if (Car_LeaveTheGround == false)
@@ -314,8 +335,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void)
   AppULTRASONIC.DeviceDriverSet_ULTRASONIC_Get(&get_Distance /*out*/);
   Application_FunctionSet.ApplicationFunctionSet_StopWhiteLine();
 
-  if( ((!searchObst || searchObst == 1 || searchObst == 4 || searchObst == 5) && get_Distance < distance) ||
-  (get_Distance < reduced_dist) )
+  if( get_Distance < dist || min_dist < reduced_dist)
   {
     ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
 
@@ -333,12 +353,11 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void)
       delay_xxx(10);
       
       dist_array[i] = get_Distance;
-      Serial.print("Get_distance: ");
-      Serial.println(get_Distance);
       if (get_Distance > max_dist) {
         max_dist = get_Distance;
         max_i = i;
       }
+      set = false;
     }
 
     searchObst = 0;
@@ -456,27 +475,16 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Servo(uint8_t Set_Servo)
 void ApplicationFunctionSet::ApplicationFunctionSet_StopWhiteLine () {
   uint8_t lvl = 60;
   int L, M, R;
-  bool is_moving = bitRead(PIN_Motor_AIN_1, 1) | bitRead(PIN_Motor_BIN_1, 1) | bitRead(PIN_Motor_PWMA, 1) | bitRead(PIN_Motor_PWMB, 1);
   
   L = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_L();
   M = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_M();
   R = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_R();
 
-
-  Serial.println("Fotocellula:");
-  Serial.println(L);
-  Serial.println(M);
-  Serial.println(R);
-
-  if (is_moving && L < lvl && M < lvl && R < lvl) {
+  if (L < lvl || M < lvl || R < lvl) {
       ApplicationFunctionSet_SmartRobotCarMotionControl (stop_it, 0);
-      Serial.println("Mi sono fermato");
       delay_xxx(5000);
-      Serial.println("Finito il primo delay");
-      ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 100);
-      Serial.println("Riparto");
+      ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 50);
       delay_xxx(1000);
-      ApplicationFunctionSet_SmartRobotCarMotionControl (Forward, 50);
-      Serial.println("Velocità normale");
+      ApplicationFunctionSet_SmartRobotCarMotionControl (Forward, 30);
   }
 }

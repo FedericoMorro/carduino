@@ -286,8 +286,8 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void)
 {
   uint16_t get_Distance;
   static uint8_t searchObstCnt = 0;
-  uint8_t speed = 30;
-  uint8_t distance = 25;
+  uint8_t speed = 50;
+  uint8_t dist = 25;
   uint8_t reduced_dist = 15;
   uint16_t dly = 600;
   uint8_t max_dist, max_i;
@@ -298,12 +298,13 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void)
 
   if (set == false) {
     AppServo.DeviceDriverSet_Servo_control(90);
+    set = true;
   }
 
   min_i = -1;
   min_dist = 50000;
-  if (searchObstCnt == 20) {
-    ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
+  if (searchObstCnt == 4) {
+    //ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
     for (uint8_t i = 0; i <= 4; i++) {
       if (i == 0 || i == 2) {
         AppServo.DeviceDriverSet_Servo_control(90);
@@ -332,14 +333,16 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void)
   }
   */
 
-  AppULTRASONIC.DeviceDriverSet_ULTRASONIC_Get(&get_Distance /*out*/);
   Application_FunctionSet.ApplicationFunctionSet_StopWhiteLine();
+  delay_xxx(10);
+  AppULTRASONIC.DeviceDriverSet_ULTRASONIC_Get(&get_Distance /*out*/);
+  delay_xxx(10);
 
-  if( get_Distance < dist || min_dist < reduced_dist)
+  if(get_Distance < dist || min_dist < reduced_dist)
   {
     ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
 
-    if (searchObst == 2 || searchObst == 3 || searchObst == 6 || searchObst == 7)
+    if (min_i == 1 || min_i == 3)
       dly = dly / 2;
 
     max_dist = 0;
@@ -360,11 +363,9 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void)
       set = false;
     }
 
-    searchObst = 0;
-
     cnt = 0;
     for (uint8_t i=0; i<5; i++) {
-      if (dist_array[i] < distance + 5){
+      if (dist_array[i] < dist + 5) {
         cnt++;
       }
     }
@@ -482,9 +483,9 @@ void ApplicationFunctionSet::ApplicationFunctionSet_StopWhiteLine () {
 
   if (L < lvl || M < lvl || R < lvl) {
       ApplicationFunctionSet_SmartRobotCarMotionControl (stop_it, 0);
-      delay_xxx(5000);
+      delay_xxx(2000);
       ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 50);
       delay_xxx(1000);
-      ApplicationFunctionSet_SmartRobotCarMotionControl (Forward, 30);
+      ApplicationFunctionSet_SmartRobotCarMotionControl (Forward, 50);
   }
 }

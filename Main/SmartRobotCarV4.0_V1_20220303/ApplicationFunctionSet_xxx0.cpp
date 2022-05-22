@@ -20,7 +20,7 @@
 #define _is_print 1
 #define _Test_print 0
 
-#define IR_RECIVE_PIN 9
+#define IR_RECEIVE_PIN 9
 #define PIN_RBGLED 4
 
 
@@ -60,7 +60,7 @@ delay_xxx(uint16_t _ms)
   }
 }
 
-static void delay_xxx(uint16_t _ms){
+static void my_delay(uint16_t _ms){
   uint16_t end, start, delayed;
 
   start = millis();

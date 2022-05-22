@@ -1,0 +1,65 @@
+void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void)
+{
+  Application_SmartRobotCarxxx0.Functional_Mode = ObstacleAvoidance_mode;
+
+  uint16_t get_Distance;
+  uint8_t speed = 30;
+  uint8_t dist = 25;
+  uint8_t min_dist_r_wall = 15;
+  uint8_t max_dist_r_wall = 25;
+  uint16_t dly = 400;
+  uint8_t dist_array[] = {0,0};
+  uint8_t i;
+
+  if (Car_LeaveTheGround == false)
+  {
+    ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
+    return;
+  }
+
+  // Check if need to stop on a white line
+  Application_FunctionSet.ApplicationFunctionSet_StopWhiteLine();
+
+  // Evaluate distances on the right and in front
+  for (i=0; i<=1; i++) {
+    if (i==0) {
+      AppServo.DeviceDriverSet_Servo_control(0);
+      delay_xxx(100);
+    } else {
+      AppServo.DeviceDriverSet_Servo_control(90);
+      delay_xxx(100);
+    }
+
+    AppULTRASONIC.DeviceDriverSet_ULTRASONIC_Get(&get_Distance);
+    delay_xxx(20);
+    dist_array[i] = get_Distance;
+  }
+
+  // If too close to any wall or too far from right wall stop it
+  if (dist_array[0] < min_dist_r_wall || dist_array[0] > max_dist_r_wall ||
+    dist_array[1] < dist) {
+      ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
+  }
+
+  // Wall on the right too close, not in front: tilt left
+  if (dist_array[0] < min_dist_r_wall && dist_array[1] > dist) {
+    ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 2 * speed);
+    delay_xxx(dly);
+  } // Wall both on the right and in front: turn left
+  else if (dist_array[0] < min_dist_r_wall && dist_array[1] < dist) {
+    ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 2 * speed);
+    delay_xxx(3 * dly / 2);
+  } // Wall on the right too far, not in front: turn right
+  else if (dist_array[0] > max_dist_r_wall && dist_array[1] > dist) {
+    ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 2 * speed);
+    delay_xxx(3 * dly / 2);
+  }
+  
+  // If enough distance from all walls move forward
+  if ((dist_array[0] > min_dist_r_wall && dist_array[0] < max_dist_r_wall) ||
+    dist_array[1] > dist) {
+    ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, speed);
+  }
+  
+  Application_FunctionSet.ApplicationFunctionSet_StopWhiteLine();
+}

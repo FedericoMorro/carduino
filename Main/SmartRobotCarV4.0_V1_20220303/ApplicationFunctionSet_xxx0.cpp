@@ -12,27 +12,26 @@
 #include <string.h>
 #include "ApplicationFunctionSet_xxx0.h"
 #include "DeviceDriverSet_xxx0.h"
+<<<<<<< HEAD
 #include <IRremote.hpp>
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 #include <IRremote.h>
 >>>>>>> 6555265 ((wrong) traffic light implementation)
 =======
 >>>>>>> 8bb1d9c (changes to current file)
+=======
+=======
+#include <IRremote.h>
+>>>>>>> clean_code
+>>>>>>> 6cce433 (Tab)
 
 #include "ArduinoJson-v6.11.1.h" //ArduinoJson
 #include "MPU6050_getdata.h"
 
 #define _is_print 1
 #define _Test_print 0
-
-#define IR_RECEIVE_PIN 9
-#define PIN_RBGLED 4
-
-
-static bool is_moving = 0;
-
-
   
 static IRrecv irrecv(9);
 static decode_results results;
@@ -291,6 +290,38 @@ static void ApplicationFunctionSet_SmartRobotCarMotionControl(SmartRobotCarMotio
 >>>>>>> 195e261 (Removed useless parts)
 =======
 >>>>>>> 8bb1d9c (changes to current file)
+
+  //Control mode that requires straight line movement adjustment（Car will has movement offset easily in the below mode，the movement cannot achieve the effect of a relatively straight direction
+  //so it needs to add control adjustment）
+  /*
+  switch (Application_SmartRobotCarxxx0.Functional_Mode)
+  {
+  case Rocker_mode:
+    Kp = 10;
+    UpperLimit = 255;
+    break;
+  case ObstacleAvoidance_mode:
+    Kp = 2;
+    UpperLimit = 180;
+    break;
+  case Follow_mode:
+    Kp = 2;
+    UpperLimit = 180;
+    break;
+  case CMD_CarControl_TimeLimit:
+    Kp = 2;
+    UpperLimit = 180;
+    break;
+  case CMD_CarControl_NoTimeLimit:
+    Kp = 2;
+    UpperLimit = 180;
+    break;
+  default:
+    Kp = 10;
+    UpperLimit = 255;
+    break;
+  }
+  */
 
   Kp = 2;
   UpperLimit = 180;
@@ -572,6 +603,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_StopWhiteLine () {
 =======
 >>>>>>> 8bb1d9c (changes to current file)
 
+<<<<<<< HEAD
   IRdata data;
 
   // bool is_moving = bitRead(PIN_Motor_AIN_1, 1) | bitRead(PIN_Motor_BIN_1, 1) | bitRead(PIN_Motor_PWMA, 1) | bitRead(PIN_Motor_PWMB, 1);
@@ -586,6 +618,8 @@ void ApplicationFunctionSet::ApplicationFunctionSet_StopWhiteLine () {
 >>>>>>> 195e261 (Removed useless parts)
 =======
 >>>>>>> 8bb1d9c (changes to current file)
+=======
+>>>>>>> 6cce433 (Tab)
   L = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_L();
   M = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_M();
   R = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_R();
@@ -598,38 +632,48 @@ void ApplicationFunctionSet::ApplicationFunctionSet_StopWhiteLine () {
   Serial.println(M);
   Serial.println(R);
 
-  if (L < lvl && M < lvl && R < lvl) {
+      if (L < lvl && M < lvl && R < lvl) {
 
-    if (IrReceiver.decode()) {
-        Serial.println(IrReceiver.decodedIRData.decodedRawData, HEX);
-        IrReceiver.printIRResultShort(&Serial); // optional use new print version
-        data = IrReceiver.decodedIRData();
-
-        while(data.address == 0xCODE && data.command == 0xDEAD){
-          ApplicationFunctionSet_SmartRobotCarMotionControl (stop_it, 0);
+        if (IrReceiver.decode()) {
+          Serial.println(IrReceiver.decodedIRData.decodedRawData, HEX);
+          IrReceiver.printIRResultShort(&Serial); // optional use new print version
           data = IrReceiver.decodedIRData();
+
+          while(data.address == 0xCODE && data.command == 0xDEAD) {
+            ApplicationFunctionSet_SmartRobotCarMotionControl (stop_it, 0);
+            data = IrReceiver.decodedIRData();
+          }
+
+          ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 100);
+          Serial.println("Riparto");
+          delay_xxx(1000);
+          ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 50);
+
+
+          IrReceiver.resume(); // Enable receiving of the next value
+        } else {
+          ApplicationFunctionSet_SmartRobotCarMotionControl (stop_it, 0);
+          Serial.println("Mi sono fermato");
+          delay_xxx(5000);
+          Serial.println("Finito il primo delay");
+          ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 100);
+          Serial.println("Riparto");
+          delay_xxx(1000);
+          ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 50);
+          Serial.println("Velocità normale");
         }
-
-        ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 100);
-        Serial.println("Riparto");
-        delay_xxx(1000);
-        ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 50);
-
-
-        IrReceiver.resume(); // Enable receiving of the next value
-    }else{
+      } else {
         ApplicationFunctionSet_SmartRobotCarMotionControl (stop_it, 0);
-        Serial.println("Mi sono fermato");
-        delay_xxx(5000);
-        Serial.println("Finito il primo delay");
-        ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 100);
-        Serial.println("Riparto");
-        delay_xxx(1000);
-        ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 50);
-        Serial.println("Velocità normale");
+        delay_xxx(2000);
+      }
+
+      ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 50);
+      delay_xxx(1000);
+      ApplicationFunctionSet_SmartRobotCarMotionControl (Forward, 50);
     }
 <<<<<<< HEAD
   }
+<<<<<<< HEAD
 }
 =======
   if (is_moving && L < lvl && M < lvl && R < lvl) {
@@ -669,3 +713,6 @@ void ApplicationFunctionSet::ApplicationFunctionSet_StopWhiteLine () {
 >>>>>>> 195e261 (Removed useless parts)
 =======
 >>>>>>> 4ea5616 (v0.3 - Finally functioning maybe)
+=======
+}
+>>>>>>> 6cce433 (Tab)

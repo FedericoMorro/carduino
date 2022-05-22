@@ -23,6 +23,7 @@ void setup()
 <<<<<<< HEAD
 <<<<<<< HEAD
   IrReceiver.begin(IR_RECEIVE_PIN, ENABLE_LED_FEEDBACK);
+<<<<<<< HEAD
   wdt_enable(WDTO_2S);
 =======
 =======
@@ -30,6 +31,9 @@ void setup()
 >>>>>>> 644d8fd (che merda)
   //wdt_enable(WDTO_2S);
 >>>>>>> 4ea5616 (v0.3 - Finally functioning maybe)
+=======
+  //wdt_enable(WDTO_2S);
+>>>>>>> 6cce433 (Tab)
 }
 
 void loop()

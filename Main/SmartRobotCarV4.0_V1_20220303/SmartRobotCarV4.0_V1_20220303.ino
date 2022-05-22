@@ -17,6 +17,7 @@ void setup()
 {
   // put your setup code here, to run once:
   Application_FunctionSet.ApplicationFunctionSet_Init();
+  Serial.begin(9600);
   //wdt_enable(WDTO_2S);
 }
 

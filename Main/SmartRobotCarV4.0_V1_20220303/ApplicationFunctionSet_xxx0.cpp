@@ -490,12 +490,18 @@ void ApplicationFunctionSet::ApplicationFunctionSet_StopWhiteLine () {
   
   if (L < lvl || M < lvl || R < lvl) {
     if(irrecv.decode(&results)) {
-      while(results.value == 57005) {
+      while(results.value == 57005) 
+      {
+        Serial.print("The strretlight is RED");
+        Serial.println(results.value);
         ApplicationFunctionSet_SmartRobotCarMotionControl (stop_it, 0);
         irrecv.resume();
         irrecv.decode(&results);
         irrecv.resume();
       }
+
+      Serial.println(results.value);
+
     } else {
       ApplicationFunctionSet_SmartRobotCarMotionControl (stop_it, 0);
       delay_xxx(2000);

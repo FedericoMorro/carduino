@@ -8,13 +8,21 @@
  */
 #include <avr/wdt.h>
 #include "ApplicationFunctionSet_xxx0.h"
+#include "car_object.h"
 
+my_car macchina;
 
 void setup()
 {
   // put your setup code here, to run once:
   Application_FunctionSet.ApplicationFunctionSet_Init();
+  
+  macchina = my_car();
+  
   wdt_enable(WDTO_2S);
+
+
+
 }
 
 void loop()
@@ -25,8 +33,12 @@ void loop()
   Application_FunctionSet.ApplicationFunctionSet_KeyCommand();
   //Application_FunctionSet.ApplicationFunctionSet_RGB();
   //Application_FunctionSet.ApplicationFunctionSet_Follow();
-  Application_FunctionSet.ApplicationFunctionSet_Obstacle();
-  Application_FunctionSet.ApplicationFunctionSet_StopWhiteLine();
+  // ---- Application_FunctionSet.ApplicationFunctionSet_Obstacle();
+  macchina.run()
+  macchina.check_line();
+  macchina.check_obstacles();
+  
+  // ---- Application_FunctionSet.ApplicationFunctionSet_StopWhiteLine();
   //Application_FunctionSet.ApplicationFunctionSet_Tracking();
   //Application_FunctionSet.ApplicationFunctionSet_Rocker();
   //Application_FunctionSet.ApplicationFunctionSet_Standby();

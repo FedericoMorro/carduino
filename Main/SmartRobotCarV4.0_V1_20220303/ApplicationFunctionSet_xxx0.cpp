@@ -2083,7 +2083,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_StopWhiteLine () {
   if (L < lvl && M < lvl && R < lvl) {
       ApplicationFunctionSet_SmartRobotCarMotionControl (stop_it, 0);
       Serial.println("Mi sono fermato");
-      delay(5000);
+      delay_xxx(5000);
       Serial.println("Finito il primo delay");
       ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 100);
       Serial.println("Riparto");

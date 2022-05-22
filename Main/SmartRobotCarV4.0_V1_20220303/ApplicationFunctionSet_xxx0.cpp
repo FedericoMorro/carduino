@@ -12,11 +12,13 @@
 #include <string.h>
 #include "ApplicationFunctionSet_xxx0.h"
 #include "DeviceDriverSet_xxx0.h"
-<<<<<<< HEAD
 #include <IRremote.hpp>
+<<<<<<< HEAD
 =======
 #include <IRremote.h>
 >>>>>>> 6555265 ((wrong) traffic light implementation)
+=======
+>>>>>>> 8bb1d9c (changes to current file)
 
 #include "ArduinoJson-v6.11.1.h" //ArduinoJson
 #include "MPU6050_getdata.h"
@@ -24,19 +26,20 @@
 #define _is_print 1
 #define _Test_print 0
 
-<<<<<<< HEAD
 #define IR_RECEIVE_PIN 9
 #define PIN_RBGLED 4
 
 
 static bool is_moving = 0;
 
-=======
 
   
 static IRrecv irrecv(9);
 static decode_results results;
+<<<<<<< HEAD
 >>>>>>> 6555265 ((wrong) traffic light implementation)
+=======
+>>>>>>> 8bb1d9c (changes to current file)
 
 ApplicationFunctionSet Application_FunctionSet;
 
@@ -245,6 +248,7 @@ static void ApplicationFunctionSet_SmartRobotCarMotionControl(SmartRobotCarMotio
   uint8_t Kp, UpperLimit;
   uint8_t speed = is_speed;
 <<<<<<< HEAD
+<<<<<<< HEAD
 
   if(speed > 0){
     is_moving = true;
@@ -285,6 +289,8 @@ static void ApplicationFunctionSet_SmartRobotCarMotionControl(SmartRobotCarMotio
   */
 =======
 >>>>>>> 195e261 (Removed useless parts)
+=======
+>>>>>>> 8bb1d9c (changes to current file)
 
   Kp = 2;
   UpperLimit = 180;
@@ -562,18 +568,24 @@ void ApplicationFunctionSet::ApplicationFunctionSet_StopWhiteLine () {
   int L, M, R;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 8bb1d9c (changes to current file)
 
   IRdata data;
 
   // bool is_moving = bitRead(PIN_Motor_AIN_1, 1) | bitRead(PIN_Motor_BIN_1, 1) | bitRead(PIN_Motor_PWMA, 1) | bitRead(PIN_Motor_PWMB, 1);
   // is_moving globale
 
+<<<<<<< HEAD
 =======
   bool is_moving = bitRead(PIN_Motor_AIN_1, 1) | bitRead(PIN_Motor_BIN_1, 1) | bitRead(PIN_Motor_PWMA, 1) | bitRead(PIN_Motor_PWMB, 1);
 =======
 >>>>>>> cb50f20 (Changes to detect white stop line)
   
 >>>>>>> 195e261 (Removed useless parts)
+=======
+>>>>>>> 8bb1d9c (changes to current file)
   L = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_L();
   M = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_M();
   R = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_R();
@@ -586,7 +598,6 @@ void ApplicationFunctionSet::ApplicationFunctionSet_StopWhiteLine () {
   Serial.println(M);
   Serial.println(R);
 
-<<<<<<< HEAD
   if (L < lvl && M < lvl && R < lvl) {
 
     if (IrReceiver.decode()) {
@@ -617,6 +628,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_StopWhiteLine () {
         ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 50);
         Serial.println("Velocità normale");
     }
+<<<<<<< HEAD
   }
 }
 =======
@@ -649,6 +661,8 @@ void ApplicationFunctionSet::ApplicationFunctionSet_StopWhiteLine () {
     ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 50);
       delay_xxx(1000);
       ApplicationFunctionSet_SmartRobotCarMotionControl (Forward, 50);
+=======
+>>>>>>> 8bb1d9c (changes to current file)
   }
 }
 <<<<<<< HEAD

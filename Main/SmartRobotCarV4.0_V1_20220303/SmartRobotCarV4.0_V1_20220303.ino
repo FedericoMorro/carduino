@@ -21,7 +21,7 @@ void setup()
   // put your setup code here, to run once:
   Application_FunctionSet.ApplicationFunctionSet_Init();
   IrReceiver.begin(IR_RECEIVE_PIN, ENABLE_LED_FEEDBACK);
-  wdt_enable(WDTO_2S);
+  //wdt_enable(WDTO_2S);
 }
 
 void loop()

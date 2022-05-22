@@ -13,6 +13,7 @@
 #include "ApplicationFunctionSet_xxx0.h"
 #include "DeviceDriverSet_xxx0.h"
 <<<<<<< HEAD
+<<<<<<< HEAD
 #include <IRremote.hpp>
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -26,6 +27,9 @@
 #include <IRremote.h>
 >>>>>>> clean_code
 >>>>>>> 6cce433 (Tab)
+=======
+#include <IRremote.h>
+>>>>>>> e57fbd0 (Fix)
 
 #include "ArduinoJson-v6.11.1.h" //ArduinoJson
 #include "MPU6050_getdata.h"

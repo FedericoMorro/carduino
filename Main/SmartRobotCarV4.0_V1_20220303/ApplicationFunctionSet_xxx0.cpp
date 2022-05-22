@@ -12,11 +12,7 @@
 #include <string.h>
 #include "ApplicationFunctionSet_xxx0.h"
 #include "DeviceDriverSet_xxx0.h"
-<<<<<<< HEAD
-#include <IRremote.hpp>
-=======
 #include <IRremote.h>
->>>>>>> clean_code
 
 #include "ArduinoJson-v6.11.1.h" //ArduinoJson
 #include "MPU6050_getdata.h"

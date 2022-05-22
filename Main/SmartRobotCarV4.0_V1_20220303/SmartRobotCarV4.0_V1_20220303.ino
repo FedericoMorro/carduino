@@ -13,14 +13,21 @@
 #define IR_RECEIVE_PIN 9
 #define PIN_RBGLED 4
 
+
+
+
 void setup()
 {
   // put your setup code here, to run once:
   Application_FunctionSet.ApplicationFunctionSet_Init();
 <<<<<<< HEAD
+<<<<<<< HEAD
   IrReceiver.begin(IR_RECEIVE_PIN, ENABLE_LED_FEEDBACK);
   wdt_enable(WDTO_2S);
 =======
+=======
+  Serial.begin(9600);
+>>>>>>> 644d8fd (che merda)
   //wdt_enable(WDTO_2S);
 >>>>>>> 4ea5616 (v0.3 - Finally functioning maybe)
 }

@@ -12,7 +12,11 @@
 #include <string.h>
 #include "ApplicationFunctionSet_xxx0.h"
 #include "DeviceDriverSet_xxx0.h"
+<<<<<<< HEAD
 #include <IRremote.hpp>
+=======
+#include <IRremote.h>
+>>>>>>> 6555265 ((wrong) traffic light implementation)
 
 #include "ArduinoJson-v6.11.1.h" //ArduinoJson
 #include "MPU6050_getdata.h"
@@ -20,12 +24,19 @@
 #define _is_print 1
 #define _Test_print 0
 
+<<<<<<< HEAD
 #define IR_RECEIVE_PIN 9
 #define PIN_RBGLED 4
 
 
 static bool is_moving = 0;
 
+=======
+
+  
+static IRrecv irrecv(9);
+static decode_results results;
+>>>>>>> 6555265 ((wrong) traffic light implementation)
 
 ApplicationFunctionSet Application_FunctionSet;
 
@@ -127,6 +138,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Init(void)
 {
   //bool res_error = true;
   Serial.begin(9600);
+  irrecv.enableIRIn();
   AppVoltage.DeviceDriverSet_Voltage_Init();
   AppMotor.DeviceDriverSet_Motor_Init();
   AppServo.DeviceDriverSet_Servo_Init(90);
@@ -375,8 +387,8 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void)
 
   min_i = -1;
   min_dist = 50000;
-  if (searchObstCnt == 4) {
-    //ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
+  if (searchObstCnt == 12) {
+    ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
     for (uint8_t i = 0; i <= 4; i++) {
       if (i == 0 || i == 2) {
         AppServo.DeviceDriverSet_Servo_control(90);
@@ -568,6 +580,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_StopWhiteLine () {
   R = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_R();
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
   Serial.println("Fotocellula:");
   Serial.println(L);
@@ -612,9 +625,29 @@ void ApplicationFunctionSet::ApplicationFunctionSet_StopWhiteLine () {
 =======
   if (L < lvl || M < lvl || R < lvl) {
 >>>>>>> cb50f20 (Changes to detect white stop line)
+=======
+  
+  if (L < lvl || M < lvl || R < lvl) {
+    if(irrecv.decode(&results)) {
+      while(results.value == 57005) 
+      {
+        Serial.print("The strretlight is RED");
+        Serial.println(results.value);
+        ApplicationFunctionSet_SmartRobotCarMotionControl (stop_it, 0);
+        irrecv.resume();
+        irrecv.decode(&results);
+        irrecv.resume();
+      }
+
+      Serial.println(results.value);
+
+    } else {
+>>>>>>> 6555265 ((wrong) traffic light implementation)
       ApplicationFunctionSet_SmartRobotCarMotionControl (stop_it, 0);
       delay_xxx(2000);
-      ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 50);
+    }
+
+    ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 50);
       delay_xxx(1000);
       ApplicationFunctionSet_SmartRobotCarMotionControl (Forward, 50);
   }

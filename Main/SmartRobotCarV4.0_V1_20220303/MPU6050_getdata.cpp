@@ -26,7 +26,7 @@ MPU6050_getdata MPU6050Getdata;
 //   MPU6050Getdata.yaw += gyroz;
 // }
 
-bool MPU6050_getdata::MPU6050_dveInit(void)
+/*bool MPU6050_getdata::MPU6050_dveInit(void)
 {
   Wire.begin();
   uint8_t chip_id = 0x00;
@@ -52,7 +52,7 @@ bool MPU6050_getdata::MPU6050_dveInit(void)
   // }
   // gzo /= times; //Calculate gyroscope offset
   return false;
-}
+}*/
 bool MPU6050_getdata::MPU6050_calibration(void)
 {
   unsigned short times = 100; //Sampling times

@@ -12,7 +12,7 @@
 #include <string.h>
 #include "ApplicationFunctionSet_xxx0.h"
 #include "DeviceDriverSet_xxx0.h"
-#include <IRremote.h>
+//#include <IRremote.h>
 
 #include "ArduinoJson-v6.11.1.h" //ArduinoJson
 #include "MPU6050_getdata.h"
@@ -104,7 +104,7 @@ void ApplicationFunctionSet_SmartRobotCarMotionControl(SmartRobotCarMotionContro
 
 void ApplicationFunctionSet::ApplicationFunctionSet_Init(void)
 {
-  bool res_error = true;
+  //bool res_error = true;
   Serial.begin(9600);
   AppVoltage.DeviceDriverSet_Voltage_Init();
   AppMotor.DeviceDriverSet_Motor_Init();
@@ -114,7 +114,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Init(void)
   AppIRrecv.DeviceDriverSet_IRrecv_Init();
   AppULTRASONIC.DeviceDriverSet_ULTRASONIC_Init();
   AppITR20001.DeviceDriverSet_ITR20001_Init();
-  res_error = AppMPU6050getdata.MPU6050_dveInit();
+  //res_error = AppMPU6050getdata.MPU6050_dveInit();
   AppMPU6050getdata.MPU6050_calibration();
 
   // while (Serial.read() >= 0)
@@ -2070,17 +2070,19 @@ void ApplicationFunctionSet::ApplicationFunctionSet_SerialPortDataAnalysis(void)
 void ApplicationFunctionSet::ApplicationFunctionSet_StopWhiteLine () {
   uint8_t lvl = 60;
   int L, M, R;
+  /*bool is_moving = bitRead(PIN_Motor_AIN_1, 1) | bitRead(PIN_Motor_BIN_1, 1) | bitRead(PIN_Motor_PWMA, 1) | bitRead(PIN_Motor_PWMB, 1);
   
   L = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_L();
   M = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_M();
   R = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_R();
+
 
   Serial.println("Fotocellula:");
   Serial.println(L);
   Serial.println(M);
   Serial.println(R);
 
-  if (L < lvl && M < lvl && R < lvl) {
+  if (is_moving && L < lvl && M < lvl && R < lvl) {
       ApplicationFunctionSet_SmartRobotCarMotionControl (stop_it, 0);
       Serial.println("Mi sono fermato");
       delay_xxx(5000);
@@ -2090,5 +2092,5 @@ void ApplicationFunctionSet::ApplicationFunctionSet_StopWhiteLine () {
       delay_xxx(1000);
       ApplicationFunctionSet_SmartRobotCarMotionControl (Forward, 50);
       Serial.println("Velocità normale");
-  }
+  }*/
 }

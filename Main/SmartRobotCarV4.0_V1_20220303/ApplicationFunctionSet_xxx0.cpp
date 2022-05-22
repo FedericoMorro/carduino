@@ -348,131 +348,69 @@ static void ApplicationFunctionSet_SmartRobotCarMotionControl(SmartRobotCarMotio
 */
 void ApplicationFunctionSet::ApplicationFunctionSet_Obstacle(void)
 {
+  Application_SmartRobotCarxxx0.Functional_Mode = ObstacleAvoidance_mode;
+
   uint16_t get_Distance;
-  static uint8_t searchObstCnt = 0;
-  uint8_t speed = 40;
+  uint8_t speed = 30;
   uint8_t dist = 25;
-  uint8_t reduced_dist = 15;
-  uint16_t dly = 500;
-  uint8_t max_dist, max_i;
-  uint8_t min_dist, min_i;
-  uint8_t dist_array[] = {0,0,0,0,0};
-  uint8_t cnt;
-  static bool set = false;
+  uint8_t min_dist_r_wall = 15;
+  uint8_t max_dist_r_wall = 25;
+  uint16_t dly = 400;
+  uint8_t dist_array[] = {0,0};
+  uint8_t i;
 
-  if (set == false) {
-    AppServo.DeviceDriverSet_Servo_control(90);
-    set = true;
-  }
-
-  min_i = -1;
-  min_dist = 50000;
-  if (searchObstCnt == 12) {
-    for (uint8_t i = 0; i <= 4; i++) {
-      if (i == 0 || i == 2) {
-        AppServo.DeviceDriverSet_Servo_control(90);
-      } else if (i == 1) {
-        AppServo.DeviceDriverSet_Servo_control(0);
-      } else {
-        AppServo.DeviceDriverSet_Servo_control(180);
-      }
-      AppULTRASONIC.DeviceDriverSet_ULTRASONIC_Get(&get_Distance /*out*/);
-      if (get_Distance < min_dist) {
-        min_dist = get_Distance;
-        min_i = i;
-      }
-    }
-    searchObstCnt = 0;
-    set = false;
-  }
-  searchObstCnt++;
-
-
-  /*
   if (Car_LeaveTheGround == false)
   {
     ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
     return;
   }
-  */
 
+  // Check if need to stop on a white line
   Application_FunctionSet.ApplicationFunctionSet_StopWhiteLine();
-  delay_xxx(10);
-  AppULTRASONIC.DeviceDriverSet_ULTRASONIC_Get(&get_Distance /*out*/);
-  delay_xxx(10);
 
-  if(get_Distance < dist || min_dist < reduced_dist)
-  {
-    ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
-
-    if (min_i == 1 || min_i == 3)
-      dly = dly / 2;
-
-    max_dist = 0;
-    max_i = 0;
-    
-    for (uint8_t i = 0; i <= 4; i++) // Omnidirectional detection of obstacle avoidance status
-    {
-      AppServo.DeviceDriverSet_Servo_control(45 * i /*Position_angle*/);
-      delay_xxx(5);
-      AppULTRASONIC.DeviceDriverSet_ULTRASONIC_Get(&get_Distance /*out*/);
-      delay_xxx(10);
-      
-      dist_array[i] = get_Distance;
-      if (get_Distance > max_dist) {
-        max_dist = get_Distance;
-        max_i = i;
-      }
-      set = false;
-    }
-
-    cnt = 0;
-    for (uint8_t i=0; i<5; i++) {
-      if (dist_array[i] < dist + 5) {
-        cnt++;
-      }
-    }
-
-    if (cnt < 3) {
-      switch (max_i)
-      {
-      // in the manouvre operations we shall not check for the line
-      case 0:
-        ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 2* speed);
-        delay_xxx(3 * dly / 2);
-        break;
-      case 1:
-        ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 2* speed);
-        delay_xxx(dly);
-        break;
-      case 2:
-        ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, speed);
-        delay_xxx(dly);
-        break;
-      case 3:
-        ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 2* speed);
-        delay_xxx(dly);
-        break;
-      case 4:
-        ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 2 * speed);
-        delay_xxx(3 * dly / 2);
-        break;
-      }
-      //first_is = true;
+  // Evaluate distances on the right and in front
+  for (i=0; i<=1; i++) {
+    if (i==0) {
+      AppServo.DeviceDriverSet_Servo_control(0);
+      delay_xxx(100);
     } else {
-      ApplicationFunctionSet_SmartRobotCarMotionControl(Backward, 2*speed);
-      delay_xxx(2 * dly);
+      AppServo.DeviceDriverSet_Servo_control(90);
+      delay_xxx(100);
     }
-    
-    ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
+
+    AppULTRASONIC.DeviceDriverSet_ULTRASONIC_Get(&get_Distance);
+    delay_xxx(20);
+    dist_array[i] = get_Distance;
   }
-  else //if (function_xxx(get_Distance, 20, 50))
-  {
+
+  // If too close to any wall or too far from right wall stop it
+  if (dist_array[0] < min_dist_r_wall || dist_array[0] > max_dist_r_wall ||
+    dist_array[1] < dist) {
+      ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
+  }
+
+  // Wall on the right too close, not in front: tilt left
+  if (dist_array[0] < min_dist_r_wall && dist_array[1] > dist) {
+    ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 2 * speed);
+    delay_xxx(dly);
+  } // Wall both on the right and in front: turn left
+  else if (dist_array[0] < min_dist_r_wall && dist_array[1] < dist) {
+    ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 2 * speed);
+    delay_xxx(3 * dly / 2);
+  } // Wall on the right too far, not in front: turn right
+  else if (dist_array[0] > max_dist_r_wall && dist_array[1] > dist) {
+    ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 2 * speed);
+    delay_xxx(3 * dly / 2);
+  }
+  
+  // If enough distance from all walls move forward
+  if ((dist_array[0] > min_dist_r_wall && dist_array[0] < max_dist_r_wall) ||
+    dist_array[1] > dist) {
     ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, speed);
   }
+  
   Application_FunctionSet.ApplicationFunctionSet_StopWhiteLine();
 }
-
 
 void ApplicationFunctionSet::ApplicationFunctionSet_Servo(uint8_t Set_Servo)
 {
